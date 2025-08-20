@@ -11,8 +11,6 @@ from src.constants.config import Config
 
 LOGGER_SERVICE=Config.LOGGER_SERVICE
 
-
-# ========= Logger Base =========
 class LoggerBase(ABC):
     """Abstract base class for all loggers."""
 
@@ -20,8 +18,6 @@ class LoggerBase(ABC):
     def log(self, data: Any, level: str = "info") -> None:
         pass
 
-
-# ========= Implementations =========
 class JsonFileLogger(LoggerBase):
     """Logs messages to a JSON file."""
 

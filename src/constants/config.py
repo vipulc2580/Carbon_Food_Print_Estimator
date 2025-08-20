@@ -21,7 +21,7 @@ class Configuration(BaseSettings):
     GOOGLE_API_KEY:str
     OPENAI_API_KEY:str
     model_config=SettingsConfigDict(
-        env_file=Path(__file__).parent.parent.parent/".env",
+        env_file=Path(__file__).parent.parent/".env",
         extra="ignore"
     )
     

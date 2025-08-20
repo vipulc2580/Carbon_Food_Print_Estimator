@@ -6,21 +6,16 @@ import base64
 MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5 MB
 
 async def validate_image(file: UploadFile = File(...)) -> ValidatedImage:
-    # Read file size
+    
     contents = await file.read()
     size_bytes = len(contents)
-
-    # Reset file cursor so handler can still use it
     file.file.seek(0)
-
-    # Size check
     if size_bytes > MAX_IMAGE_SIZE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Image too large. Max allowed: 5MB, got {round(size_bytes/1024/1024,2)}MB"
         )
 
-    # Content type check
     allowed_types = {"image/png", "image/jpeg", "image/jpg", "image/webp"}
     if file.content_type not in allowed_types:
         raise HTTPException(

@@ -10,7 +10,6 @@ class EmailMixin(BaseModel):
 
     @field_validator("email")
     def validate_email(cls, value: str) -> str:
-        # RFC 5322 simplified regex for email validation
         email_regex = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
         if not re.match(email_regex, value):
             raise ValueError("Invalid email format")

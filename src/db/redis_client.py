@@ -9,6 +9,7 @@ import json
 JTI_Expiry=3600
 
 class RedisClient:
+    """ SingleTon Class to get Redis Client"""
     _instance:Optional[redis.Redis]=None 
     
     @classmethod
@@ -29,15 +30,18 @@ class RedisClient:
     
     
 async def add_jti_to_blocklist(jti:str)->None:
+    """ Add JWT id to blocklist in redis"""
     client=RedisClient.get_instance()
     await client.set(name=jti,value="",ex=JTI_Expiry)
 
 async def token_in_blocklist(jti:str)->None:
+    """ Checks JWT id is present in blocklist in redis"""
     client=RedisClient.get_instance()
     value=await client.get(jti)
     return value is not None  
 
 async def add_dish_carbon_foot_print_analysis(dish_name: str, value: dict) -> None:
+    """Caching the responses for Dish Name to avoid LLM Call"""
     client = RedisClient.get_instance()
     # Serialize dict -> JSON string
     await client.set(
@@ -47,6 +51,7 @@ async def add_dish_carbon_foot_print_analysis(dish_name: str, value: dict) -> No
     )
 
 async def dish_in_cache(dish_name: str) -> Optional[DishCarbonAnalysisResponse]:
+    """ Checking whether dish_name exists in redis cache"""
     client = RedisClient.get_instance()
     result = await client.get(dish_name)
     if result:

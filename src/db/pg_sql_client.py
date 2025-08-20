@@ -5,11 +5,6 @@ from sqlalchemy.orm import sessionmaker
 from src.constants.config import Config
 from sqlalchemy_utils import database_exists, create_database
 
-
-
-
-
-
 engine=AsyncEngine(
     create_engine(
         url=Config.DATABASE_URL,

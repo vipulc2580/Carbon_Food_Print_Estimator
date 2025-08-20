@@ -31,26 +31,22 @@ class LLMService:
         start_time = time.time()
         start_timestamp = datetime.now(timezone.utc).isoformat()
         try:
-            # --- Parser ---
             parser = PydanticOutputParser(pydantic_object=DishMetrics)
             prompt = ChatPromptTemplate.from_messages([
                 ("system", DISH_METRICS_SYSTEM_PROMPT),
                 ("human", DISH_METRICS_USER_PROMPT),
             ])
 
-            # --- Get LLM client bound to parser ---
             llm = LLMBuilderFactory.get_llm_client(provider="openai")
             llm = llm.with_structured_output(DishMetrics)  # direct binding with Pydantic
 
-            # --- Run chain ---
             chain = prompt | llm
             result = await chain.ainvoke({"dish_name": dish_name})
             end_time = time.time()
             duration = round(end_time - start_time, 2)
-            print(f"Total Time taken is {round(end_time-start_time,2)}")
             if not result or not result.model_dump(exclude_none=True):
                 return None 
-            return result  # already a DishMetrics object
+            return result 
 
         except Exception as e:
             end_time = time.time()
@@ -90,16 +86,13 @@ class LLMService:
             result = await chain.ainvoke({"dish_name": dish_name})
             end_time = time.time()
             duration = round(end_time - start_time, 2)
-            print(f"Total Time taken is {round(end_time-start_time,2)}")
 
-            # handle empty {} or [] result
             if not result or not result.ingredients:
                 return None
 
-            return result  # already a DishIngredients object
+            return result  
 
         except Exception as e:
-            # logging/error handling layer
             end_time = time.time()
             duration = round(end_time - start_time, 2)
             await global_logger.log_event(
@@ -138,15 +131,12 @@ class LLMService:
 
             end_time = time.time()
             duration = round(end_time - start_time, 2)
-            print(f"Total Time taken is {duration}")
-            # handle empty {} or [] result
             if not result or not result.results:
                 return None
 
-            return result  # already an IngredientCarbonResponse object
+            return result  
 
         except Exception as e:
-            # logging/error handling layer
             end_time = time.time()
             duration = round(end_time - start_time, 2)
             await global_logger.log_event(
@@ -195,7 +185,6 @@ class LLMService:
                 return None
 
             duration = round(time.time() - start_time, 2)
-            print(f"Total Time taken: {duration}s")
             final_result=DishCarbonAnalysisResponse(metrics=metrics, ingredients=ingredients, lca=lca)
             # store in cache 
             await add_dish_carbon_foot_print_analysis(dish_name=dish_name.lower(),value=final_result.model_dump())
@@ -226,7 +215,6 @@ class LLMService:
         start_time = time.time()
         start_timestamp = datetime.now(timezone.utc).isoformat()
         try:
-            # --- Parser ---
             parser = PydanticOutputParser(pydantic_object=FoodItem)
             prompt = ChatPromptTemplate.from_messages([
                 ("system", DISH_IMAGE_RECOGNITION_SYSTEM_PROMPT),
@@ -236,20 +224,16 @@ class LLMService:
                 ]),
             ])
             
-            # --- Get LLM client bound to parser ---
             llm = LLMBuilderFactory.get_llm_client(provider="openai")
-            llm = llm.with_structured_output(FoodItem)  # ensures proper pydantic binding
+            llm = llm.with_structured_output(FoodItem)  
 
-            # --- Run chain ---
             chain = prompt | llm
-            result =await chain.ainvoke({})  # no text input, only image
+            result =await chain.ainvoke({})  
             end_time = time.time()
             duration = round(end_time - start_time, 2)
-            print(f"Dish detection took {duration}s")
             if not result or not result.model_dump(exclude_none=True):
                 return None 
-            print(result)
-            return result  # already DishName object
+            return result 
 
         except Exception as e:
             end_time = time.time()
@@ -266,41 +250,6 @@ class LLMService:
             )
             return None
         
-    # @staticmethod
-    # async def analyze_dish_carbon_from_image(image_b64: str):
-    #     """
-    #     Full pipeline in one function:
-    #     1. Detect dish from image
-    #     2. Estimate carbon footprint
-    #     Returns DishCarbonAnalysisResponse or None
-    #     """
-    #     try:
-    #         async def detect_step(x):
-    #             image_b64=x.get('image_b64')
-    #             return await LLMService.detect_dish_from_image(image_b64=image_b64)
-
-    #         async def carbon_step(detected):
-    #             if not detected or not getattr(detected, "dish_name", None):
-    #                 return None
-    #             return await LLMService.estimate_dish_carbon_foot_print_analysis(detected.dish_name)
-
-    #         chain = RunnableSequence(
-    #             RunnableLambda(detect_step),
-    #             RunnableLambda(carbon_step),
-    #         )
-
-    #         result=await chain.ainvoke({"image_b64": image_b64})
-    #         return result
-    #     except Exception as e:
-    #         await global_logger.log_event(
-    #             {
-    #                 "message": "error_in_dish_carbon_from_image",
-    #                 "error": str(e),
-    #                 "image_b64_truncated": image_b64[:50] + "...",  # prevent logging full image
-    #             },
-    #             level="error",
-    #         )
-    #         return None
     @staticmethod
     async def analyze_dish_carbon_from_image(image_b64: str):
         """
@@ -312,7 +261,6 @@ class LLMService:
         5. Otherwise → estimate carbon + cache it
         """
         try:
-            # STEP 1: Detect dish
             detected = await LLMService.detect_dish_from_image(image_b64=image_b64)
             if not detected or not getattr(detected, "dish_name", None):
                 return None
@@ -326,7 +274,6 @@ class LLMService:
             if cached_dish_result:
                 return cached_dish_result
 
-            # STEP 4: Estimate carbon footprint
             result = await LLMService.estimate_dish_carbon_foot_print_analysis(dish_name)
             
             return result

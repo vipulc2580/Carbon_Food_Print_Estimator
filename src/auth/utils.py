@@ -19,9 +19,11 @@ env = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
 serializer = URLSafeTimedSerializer(Config.JWT_SECRET,salt="email-configuration")
 
 def hash_password(password: str) -> str:
+    """ Generate Hash for given password"""
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """ verify the plain password with given hash of stored password"""
     return pwd_context.verify(plain_password, hashed_password)
 
 def create_access_token(user_data:dict,expiry:timedelta=None,refresh:bool=False):
@@ -44,7 +46,6 @@ def create_access_token(user_data:dict,expiry:timedelta=None,refresh:bool=False)
 
 def verify_token(token:str)->dict:
     # since the token is invalid or token is expired jwt might raise an error to avoid it 
-    # we use try-except block here 
     try:
         token_data=jwt.decode(jwt=token,
                         key=Config.JWT_SECRET,
@@ -54,12 +55,13 @@ def verify_token(token:str)->dict:
         return None 
     
 def create_url_safe_token(data:dict):
-    
+    """ Creates encoded token for given data"""
     token=serializer.dumps(data)
     
     return token 
 
 def decode_url_safe_token(token:str):
+    """ Decodes the token details from given encoded token"""
     try:
         token_data = serializer.loads(token, max_age=300)  # token valid only for 5 mins
         return token_data
