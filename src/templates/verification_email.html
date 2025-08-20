@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email Template</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      text-align: center;
+    }
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: inline-block;
+      text-align: left;
+    }
+    .header {
+      background: #4caf50;
+      color: white;
+      text-align: center;
+      padding: 25px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+    .content {
+      padding: 25px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333333;
+      text-align: center;
+    }
+    .button {
+      display: inline-block;
+      margin: 25px 0;
+      padding: 14px 32px;
+      background: #4caf50;
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background 0.3s ease;
+    }
+    .button:hover {
+      background: #328435ff;
+    }
+    .button:visited,
+    .button:active {
+      color: #ffffff !important; /* prevent purple/blue visited link color */
+    }
+    .footer {
+      background: #f1f3f6;
+      text-align: center;
+      padding: 18px;
+      font-size: 14px;
+      color: #777777;
+    }
+    @media only screen and (max-width: 600px) {
+      .container {
+        margin: 15px;
+      }
+      .content {
+        font-size: 14px;
+        padding: 20px;
+      }
+      .header {
+        font-size: 22px;
+        padding: 20px;
+      }
+      .button {
+        padding: 12px 24px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      Welcome to Reewild
+    </div>
+    <div class="content">
+      <b><p>Hello {{ user_name }},</p></b>
+      <p>We’re excited to have you on board! Please verify your email to activate your account:</p>
+      <a href="{{ activation_link }}" class="button">Verify Email</a>
+      <p>If you didn’t request this, you can safely ignore this email.</p>
+      <p>Cheers,<br>Team Reewild</p>
+    </div>
+    <div class="footer">
+      &copy; 2025 Reewild.com. All rights reserved.
+    </div>
+  </div>
+</body>
+</html>
