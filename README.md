@@ -14,8 +14,6 @@
 
 ## Introduction
 
-Introduction
-
 Carbon Food Print Estimator is a full-featured web application designed to help users understand the environmental impact of their food choices. It supports ingredient-level carbon footprint calculations, user authentication, and interactive visualizations. The project leverages FastAPI for the backend, Streamlit for the frontend, and uses Celery with Redis for background tasks like sending emails and heavy computations.
 
 ## Features
